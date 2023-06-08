@@ -1,6 +1,11 @@
 # Compiled Lua sources
 luac.out
 
+build_*
+compile_commands.json
+*/.cache/*
+.luarc.json
+
 # luarocks build files
 *.src.rock
 *.zip
