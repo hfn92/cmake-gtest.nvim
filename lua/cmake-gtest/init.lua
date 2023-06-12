@@ -95,7 +95,7 @@ function gtest.find_main_files()
   local files = vim.split(result, '\n')
 
   for i, name in ipairs(files) do
-    files[i] = vim.trim(name)
+    files[i] = vim.trim(name):gsub("\\","/")
   end
   return files
 end
@@ -132,6 +132,9 @@ end
 ------------------------------------------------------------------------------------------------------------------------
 function gtest.find_tests(path)
 ------------------------------------------------------------------------------------------------------------------------
+  if vim.fn.has("win32") then
+    path = path:gsub("/","\\")
+  end
   local handle = io.popen(path .. " --gtest_list_tests")
   if handle == nil then return end
   local result = handle:read("*a")
@@ -176,7 +179,7 @@ function gtest.find_tests(path)
     local pattern = "^(.-%.)(.*)$"
     local tc, ti = string.match(v, pattern) -- type info (after #)
 
-    if tc ~= nil then 
+    if tc ~= nil then
       testcase = vim.trim(tc)
       type_info = ti
       table.insert(testcases, testcase)
@@ -211,7 +214,9 @@ function gtest.find_all_tests(callback)
   end)
 end
 
+------------------------------------------------------------------------------------------------------------------------
 function gtest.select_and_run_test(args)
+------------------------------------------------------------------------------------------------------------------------
   local debug = args.bang
   gtest.find_all_tests(function (testsuites)
     local names = testsuites.names
@@ -324,7 +329,7 @@ function gtest.run_testsuite(args, cmd_args)
     local paths = testsuites.paths
     local files = testsuites.files
 
-    local currentfile = vim.fn.expand("%:.")
+    local currentfile = vim.fn.expand("%:."):gsub("\\","/")
 
     local possibleSuites = {}
     local possiblePaths = {}
@@ -339,7 +344,7 @@ function gtest.run_testsuite(args, cmd_args)
     if num == 0 then
       log.warn("No testsuites found for '" .. currentfile .. "'")
     elseif num == 1 then
-      gtest.run(names[1], paths[1], cmd_args or {}, debug)
+      gtest.run(possibleSuites[1], possiblePaths[1], cmd_args or {}, debug)
     else
       vim.ui.select(possibleSuites, { prompt = "Select Testsuite to run" }, vim.schedule_wrap(function (_, idx)
         if not idx then
