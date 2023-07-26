@@ -3,7 +3,7 @@ local log = require("cmake-gtest.log")
 local parser = {}
 
 local function is_test(line)
-  if (string.match(line, "^TEST") or string.match(line, "^TYPED_TEST") ) and string.find(line, "DISABLED_") == nil then
+  if (string.match(line, "^TEST") or string.match(line, "^TYPED_TEST")) and string.find(line, "DISABLED_") == nil then
     return true
   end
   return false
@@ -37,7 +37,7 @@ local function parse_test(line)
 end
 
 function parser.find_nearest_test()
-    local current = vim.api.nvim_win_get_cursor(0)[1]
+  local current = vim.api.nvim_win_get_cursor(0)[1]
 
   while current > 0 do
     local line = vim.api.nvim_buf_get_lines(0, current - 1, current, false)[1]
@@ -49,8 +49,6 @@ function parser.find_nearest_test()
     end
     current = current - 1
   end
-
-   log.warn("No tests found")
 end
 
 -- Parser using the clang? ast. Maybe implement later if simple parser does not work
@@ -59,7 +57,7 @@ end
 --         return
 --     else
 --     print(string.rep(" ", d) .. node.role .. " -  " .. node.kind .. " - " .. (node.detail or ""))
---      
+--
 --     if node.role == "declaration" and node.kind == "CXXRecord" then
 --       print(node.detail)
 --     end
@@ -81,7 +79,7 @@ end
 --         return
 --     else
 --     print( node.role .. " -  " .. node.kind .. " - " .. (node.detail or ""))
---      
+--
 --     if node.role == "declaration" and node.kind == "CXXRecord" then
 --       print(node.detail)
 --     end
@@ -114,6 +112,5 @@ end
 --         -- },
 --     }, handler)
 -- end
-
 
 return parser
