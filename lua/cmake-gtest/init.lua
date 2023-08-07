@@ -92,13 +92,7 @@ function gtest.run_testcase_under_cursor(args)
 end
 
 function gtest.find_main_files()
-	local handle = io.popen("rg -l --color never InitGoogleTest")
-	if handle == nil then
-		return
-	end
-	local result = handle:read("*a")
-	handle:close()
-	local files = vim.split(result, "\n")
+	local files = vim.fn.systemlist("rg -l --color never -e '(gtest.h)|(gmock.h)|(InitGoogleTest)'")
 
 	for i, name in ipairs(files) do
 		files[i] = vim.trim(name):gsub("\\", "/")
