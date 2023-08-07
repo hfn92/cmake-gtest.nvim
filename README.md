@@ -1,7 +1,10 @@
+
 # cmake-gtest.nvim
-A very WIP gtest plugin. This plugin uses https://github.com/Civitasv/cmake-tools.nvim to detect and run gtest executables and tests in the quickfix window.
+
+A very WIP gtest plugin. This plugin uses <https://github.com/Civitasv/cmake-tools.nvim> to detect and run gtest executables and tests in the quickfix window.
 
 ## Features
+
 * Detects what executables contain gtest tests
 * Run test executables
 * Run test exectuable according to the current file
@@ -10,11 +13,13 @@ A very WIP gtest plugin. This plugin uses https://github.com/Civitasv/cmake-tool
 * Support parameterized and typed test
 
 ## How it works
+
 * Detects test executables by using `ripgrep` to check which executable contains a file with `InitGoogleTest`
-* Uses `--gtest_list_tests` to detect all tests 
+* Uses `--gtest_list_tests` to detect all tests
 * Run under cursor uses string matching
 
 ## requirements
+
 * ripgrep
 * cmake-tools.nvim
 
@@ -37,7 +42,9 @@ A very WIP gtest plugin. This plugin uses https://github.com/Civitasv/cmake-tool
 `[!]` Adding `!` after commands runs the test(s) in debug mode as configured in `cmake-tools.nvim`
 
 ### Integrate Codeactions
+
 You can also integrate code actions by using
+
 ```lua
 require'null-ls'.register({
   name = 'GTestActions',
