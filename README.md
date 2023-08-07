@@ -16,7 +16,7 @@ A very WIP gtest plugin. This plugin uses https://github.com/Civitasv/cmake-tool
 
 ## requirements
 * ripgrep
-* cmake-tools.nvim (currently my wip branch https://github.com/hfn92/cmake-tools.nvim/tree/CmakeModelInfoMerge)
+* cmake-tools.nvim
 
 ## Commands
 
@@ -38,7 +38,7 @@ A very WIP gtest plugin. This plugin uses https://github.com/Civitasv/cmake-tool
 
 ### Integrate Codeactions
 You can also integrate code actions by using
-```
+```lua
 require'null-ls'.register({
   name = 'GTestActions',
   method = {require'null-ls'.methods.CODE_ACTION},
