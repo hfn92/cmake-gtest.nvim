@@ -31,8 +31,6 @@ function quickfix.run(cwd, cmd, env, args, opts)
 		quickfix.show(opts.gtest_quickfix_opts)
 	end
 
-	vim.notify(vim.inspect(env))
-
 	quickfix.job = Job:new({
 		command = cmd,
 		args = args,
