@@ -7,7 +7,11 @@ local has_nvim_dap = pcall(require, "dap")
 
 local gtest = {}
 
-function gtest.setup(values) end
+local config = {}
+
+function gtest.setup(values)
+	config = vim.tbl_deep_extend("force", const, values)
+end
 
 function gtest.get_code_actions()
 	local test = parser.find_nearest_test()
@@ -107,15 +111,19 @@ function gtest.run(target, args, debug)
 	else
 		vim.cmd("wall")
 
-		local config = cmake.get_config()
-		local model = config:get_code_model_info()[target]
-		local result = config:get_launch_target_from_info(model)
+		local cconfig = cmake.get_config()
+		local model = cconfig:get_code_model_info()[target]
+		local result = cconfig:get_launch_target_from_info(model)
 		local cwd = cmake.get_launch_path(target)
 		local cmd = result.data
 		local env = cmake.get_run_environment(target)
 
 		cmake.quick_build({ fargs = { target } }, function()
-			return quickfix.run(cwd, cmd, env, args, const)
+			if config.hooks and config.hooks.run and type(config.hooks.run) == "function" then
+				config.hooks.run(cwd, cmd, args, env)
+			else
+				return quickfix.run(cwd, cmd, env, args, config)
+			end
 		end)
 	end
 end
