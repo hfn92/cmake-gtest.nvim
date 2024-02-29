@@ -46,16 +46,16 @@ function gtest.get_code_actions()
 	table.insert(filter, filter[2])
 
 	table.insert(fn, function()
-		gtest.run_testsuite({ bang = false }, { "--gtest_filter=" .. filter[1] })
+		gtest.run_testsuite({ bang = false }, { "--gtest_filter=" .. filter[1] }, filter[1])
 	end)
 	table.insert(fn, function()
-		gtest.run_testsuite({ bang = false }, { "--gtest_filter=" .. filter[2] })
+		gtest.run_testsuite({ bang = false }, { "--gtest_filter=" .. filter[2] }, filter[2])
 	end)
 	table.insert(fn, function()
-		gtest.run_testsuite({ bang = true }, { "--gtest_filter=" .. filter[3] })
+		gtest.run_testsuite({ bang = true }, { "--gtest_filter=" .. filter[3] }, filter[3])
 	end)
 	table.insert(fn, function()
-		gtest.run_testsuite({ bang = true }, { "--gtest_filter=" .. filter[4] })
+		gtest.run_testsuite({ bang = true }, { "--gtest_filter=" .. filter[4] }, filter[4])
 	end)
 
 	return { display = actions, filter = filter, fn = fn }
@@ -104,7 +104,7 @@ function gtest.find_main_files()
 	return files
 end
 
-function gtest.run(target, args, debug)
+function gtest.run(target, args, debug, filter)
 	if debug and has_nvim_dap then
 		local fargs = { target, unpack(args) }
 		cmake.quick_debug({ fargs = fargs })
@@ -120,7 +120,7 @@ function gtest.run(target, args, debug)
 
 		cmake.quick_build({ fargs = { target } }, function()
 			if config.hooks and config.hooks.run and type(config.hooks.run) == "function" then
-				config.hooks.run(cwd, cmd, args, env)
+				config.hooks.run(target, filter, cwd, cmd, args, env)
 			else
 				return quickfix.run(cwd, cmd, env, args, config)
 			end
@@ -241,7 +241,7 @@ function gtest.select_and_run_test(args)
 				filter = string.gsub(filter, "%s.*", "")
 			end
 
-			return gtest.run(target[idx], { "--gtest_filter=" .. filter }, debug)
+			return gtest.run(target[idx], { "--gtest_filter=" .. filter }, debug, filter)
 		end)
 	end)
 end
@@ -265,7 +265,7 @@ function gtest.select_and_run_testcase(args)
 			if not idx then
 				return
 			end
-			return gtest.run(suite[idx], { "--gtest_filter=" .. display[idx] .. "*" }, debug)
+			return gtest.run(suite[idx], { "--gtest_filter=" .. display[idx] .. "*" }, debug, display[idx])
 		end)
 	end)
 end
@@ -305,7 +305,7 @@ local table_size = function(table)
 end
 
 -- Run the testsuite executable according to the current file
-function gtest.run_testsuite(args, cmd_args)
+function gtest.run_testsuite(args, cmd_args, filter)
 	local debug = args.bang
 	gtest.find_testsuites(function(testsuites)
 		if testsuites == nil then
@@ -329,7 +329,7 @@ function gtest.run_testsuite(args, cmd_args)
 		if num == 0 then
 			log.warn("No testsuites found for '" .. currentfile .. "'")
 		elseif num == 1 then
-			gtest.run(possibleSuites[1], cmd_args or {}, debug)
+			gtest.run(possibleSuites[1], cmd_args or {}, debug, filter)
 		else
 			vim.ui.select(
 				possibleSuites,
@@ -338,7 +338,7 @@ function gtest.run_testsuite(args, cmd_args)
 					if not idx then
 						return
 					end
-					return gtest.run(possibleSuites[idx], cmd_args or {}, debug)
+					return gtest.run(possibleSuites[idx], cmd_args or {}, debug, filter)
 				end)
 			)
 		end

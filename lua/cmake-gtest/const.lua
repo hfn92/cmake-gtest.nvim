@@ -8,11 +8,13 @@ local const = {
 	hooks = {
 		--- Overwrite the internal quickfix runner with a function
 		run = nil,
+		---@param testsuite string name of testsuite being run
+		---@param test string name of the test being run
 		---@param cwd string working directory for command execution
 		---@param cmd string the command to execute
 		---@param args string[] function args
 		---@param env { [string] : string } environment variables
-		-- run = function(cwd, cmd, args, env)
+		-- run = function(testsuite, cwd, cmd, args, env)
 		-- end,
 	},
 }
