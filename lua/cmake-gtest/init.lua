@@ -120,6 +120,10 @@ function gtest.run(target, args, debug, filter)
 
 		cmake.quick_build({ fargs = { target } }, function()
 			if config.hooks and config.hooks.run and type(config.hooks.run) == "function" then
+				for idx, value in ipairs(args) do
+					args[idx] = string.format([["%s"]], value)
+				end
+
 				config.hooks.run(target, filter, cwd, cmd, args, env)
 			else
 				return quickfix.run(cwd, cmd, env, args, config)
