@@ -9,7 +9,7 @@ local const = {
 		--- Overwrite the internal quickfix runner with a function
 		run = nil,
 		---@param testsuite string name of testsuite being run
-		---@param test string name of the test being run
+		---@param test string? name of the test being run. nil when whole testsuite is run
 		---@param cwd string working directory for command execution
 		---@param cmd string the command to execute
 		---@param args string[] function args

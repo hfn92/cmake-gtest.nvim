@@ -5,6 +5,17 @@ local quickfix = {
 	job = nil,
 }
 
+local function is_quickfix_open()
+	local qf_exists = false
+	for _, win in pairs(vim.fn.getwininfo()) do
+		if win["quickfix"] == 1 then
+			qf_exists = true
+		end
+	end
+
+	return qf_exists
+end
+
 function quickfix.scroll_to_bottom()
 	vim.api.nvim_command("cbottom")
 end
@@ -17,8 +28,10 @@ local function append_to_quickfix(error, data)
 end
 
 function quickfix.show(quickfix_opts)
-	vim.api.nvim_command(quickfix_opts.position .. " copen " .. quickfix_opts.size)
-	vim.api.nvim_command("wincmd p")
+	if not is_quickfix_open() then
+		vim.api.nvim_command(quickfix_opts.position .. " copen " .. quickfix_opts.size)
+		vim.api.nvim_command("wincmd p")
+	end
 end
 
 function quickfix.close()
@@ -39,15 +52,15 @@ function quickfix.run(cwd, cmd, env, args, opts)
 		on_stdout = vim.schedule_wrap(append_to_quickfix),
 		on_stderr = vim.schedule_wrap(append_to_quickfix),
 		on_exit = vim.schedule_wrap(function(_, code, signal)
-			append_to_quickfix("Exited with code " .. (signal == 0 and code or 128 + signal))
-			if code == 0 and signal == 0 then
-				if opts.on_success then
-					opts.on_success()
-				end
-			elseif opts.gtest_quickfix_opts.show == "only_on_error" then
-				quickfix.show(opts.gtest_quickfix_opts)
-				quickfix.scroll_to_bottom()
-			end
+			-- append_to_quickfix("Exited with code " .. (signal == 0 and code or 128 + signal))
+			-- if code == 0 and signal == 0 then
+			-- 	if opts.on_success then
+			-- 		opts.on_success()
+			-- 	end
+			-- elseif opts.gtest_quickfix_opts.show == "only_on_error" then
+			-- 	quickfix.show(opts.gtest_quickfix_opts)
+			-- 	quickfix.scroll_to_bottom()
+			-- end
 		end),
 	})
 
