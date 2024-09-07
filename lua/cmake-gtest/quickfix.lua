@@ -52,15 +52,15 @@ function quickfix.run(cwd, cmd, env, args, opts)
 		on_stdout = vim.schedule_wrap(append_to_quickfix),
 		on_stderr = vim.schedule_wrap(append_to_quickfix),
 		on_exit = vim.schedule_wrap(function(_, code, signal)
-			-- append_to_quickfix("Exited with code " .. (signal == 0 and code or 128 + signal))
-			-- if code == 0 and signal == 0 then
-			-- 	if opts.on_success then
-			-- 		opts.on_success()
-			-- 	end
-			-- elseif opts.gtest_quickfix_opts.show == "only_on_error" then
-			-- 	quickfix.show(opts.gtest_quickfix_opts)
-			-- 	quickfix.scroll_to_bottom()
-			-- end
+			append_to_quickfix("Exited with code " .. (signal == 0 and code or 128 + signal))
+			if code == 0 and signal == 0 then
+				if opts.on_success then
+					opts.on_success()
+				end
+			elseif opts.gtest_quickfix_opts.show == "only_on_error" then
+				quickfix.show(opts.gtest_quickfix_opts)
+				quickfix.scroll_to_bottom()
+			end
 		end),
 	})
 
